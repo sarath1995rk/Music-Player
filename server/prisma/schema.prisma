@@ -1,0 +1,44 @@
+generator client {
+  provider   = "prisma-client-js"
+  engineType = "library"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+id         Int       @id @default(autoincrement())
+name        String 
+email       String       @unique
+password    String
+songs    Song[]
+favouriteSongs FavouriteSong[]
+
+}
+
+
+model Song {
+  id               String   @id @default(uuid())
+  artist           String
+  songName         String
+  hexCode          String
+  songUrl          String
+  thumbnailUrl     String
+  songPublicId     String
+  thumbnailPublicId String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  userId            Int
+  user              User     @relation(fields: [userId], references: [id])
+  favoritedBy       FavouriteSong[]
+}
+
+model FavouriteSong {
+  id        Int   @id @default(autoincrement())
+  userId    Int
+  songId    String
+  user      User     @relation(fields: [userId], references: [id])
+  song      Song     @relation(fields: [songId], references: [id])
+  @@unique([userId, songId])
+}
